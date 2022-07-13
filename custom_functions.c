@@ -1,96 +1,71 @@
-#include "main.h"
-#include <stddef.h>
 #include <stdlib.h>
+#include <unistd.h>
+
+
 /**
- * get_valid_type - ID the type specifier passed by printf with a valid_type
- * @s: Type to check given as char
- * Return: pointer function of char type, valid_type matched
+ * _putchar - writes the character c to stdout
+ * @c: The character to print
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
  */
-char *(*get_valid_type(char s))(va_list)
+int _putchar(char c)
+{
+	return (write(1, &c, 1));
+}
+/**
+ *_strlen - reset number
+ *Description: This function return a length for some string
+ *@s: pointer char
+ *Return: int length
+ */
+int _strlen(char *s)
+{
+	int len = 0;
+
+	while (*s++)
+	{
+		len++;
+	}
+	return (len);
+}
+/**
+ *_puts - print string
+ *Description: print some string
+ *@str: pointer char
+ *Return: Nothing
+ */
+void _puts(char *str)
 {
 	int i;
-	v_types valid_types[] = {
-		{"c", found_char},
-		{"s", found_string},
-		{"%", found_percent},
-		{"d", found_int},
-		{"i", found_int},
-		{"u", found_unsigned},
-		{"o", found_octal},
-		{"r", found_reverse},
-		{"R", found_rot13},
-		{NULL, NULL}
-	};
 
-	for (i = 0; valid_types[i].valid; i++)
+	for (i = 0; i < _strlen(str); i++)
 	{
-
-		if (s == *valid_types[i].valid)
-		{
-			return (valid_types[i].f);
-		}
+		_putchar(str[i]);
 	}
-
-	return (NULL);
 }
 /**
- * alloc_buffer - allocates characters to buffer, handling overflows
- * @hold: string to allocate into buffer
- * @hlen: hold length
- * @buffer: buffer char array
- * @blen: pointer to end of buffer
- * @total: pointer to total character counter
- * Return: buffer length
+ *convert_to - convert numbers
+ *Description: This function convert numbers to other formats
+ *decimal, octal, hexadecimal, binary etc..
+ *@representation: char representation[] = "0123456789ABCDEF";
+ *@num: num to tranasform
+ *@base: base to transform num
+ *Return: number into char pointer
  */
-int alloc_buffer(char *hold, int hlen, char *buffer, int blen, double *total)
+char *convert_to(char representation[], unsigned int num, int base)
 {
-	int sizecpy = 0;
+	char *ptr;
+	static char buffer[128];
+	int mod = 0;
 
-	if (hlen + blen > BUFSIZE)
-	{
-		sizecpy = BUFSIZE - blen;
-		_memcpy(buffer, hold, sizecpy, blen);
-		_puts(buffer, BUFSIZE);
-		hold += sizecpy;
-		_memcpy(buffer, hold, hlen - sizecpy, 0);
-		blen = hlen - sizecpy;
-		*total += BUFSIZE;
-	}
-	else
-	{
-		_memcpy(buffer, hold, hlen, blen);
-		blen += hlen;
-	}
+	ptr = &buffer[127];
+	*ptr = '\0';
 
-	return (blen);
-}
-/**
-  * ctos - converts a character to a string
-  * @c: character to convert
-  * Return: pointer to string
-  */
-char *ctos(char c)
-{
-	char string[1];
-	char *p;
-
-	p = string;
-	string[0] = c;
-	return (p);
-}
-/**
- * found_nothing - no matches found but % passed
- * @c: character unmatched to return and store
- * Return: string with percent and character.
- */
-char *found_nothing(char c)
-{
-	char string[3];
-	char *p;
-
-	p = string;
-	string[0] = '%';
-	string[1] = c;
-	string[2] = '\0';
-	return (p);
+	do {
+		mod = num % base;
+		*--ptr = representation[mod];
+		num /= base;
+	} while (num != 0);
+	return (ptr);
 }
